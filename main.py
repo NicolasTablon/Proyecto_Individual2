@@ -7,6 +7,9 @@ from datetime import datetime
 import requests
 from typing import List
 from io import StringIO
+from fastapi import FastAPI
+import uvicorn
+
 url = "https://github.com/NicolasTablon/Proyecto_Individual2/blob/main/Csv_Proyecto_Terminado.csv"
 
 response = requests.get(url)
@@ -49,10 +52,6 @@ def productoras_exitosas(productora: str):
     cantidad_peliculas = len(peliculas_productora)
     revenue_total = peliculas_productora["revenue"].sum()
     return f"La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas"
-from fastapi import FastAPI
-import uvicorn
-
-app = FastAPI()
 
 @app.get('/recomendacion')
 async def recomendacion(titulo: str):
