@@ -9,8 +9,9 @@ from typing import List
 from io import StringIO
 from fastapi import FastAPI
 import uvicorn
+import ast
 
-url = "https://github.com/NicolasTablon/Proyecto_Individual2/blob/main/Csv_Proyecto_Terminado.csv"
+url = "https://raw.githubusercontent.com/NicolasTablon/Proyecto_Individual2/main/Csv_Proyecto_Terminado.csv"
 
 response = requests.get(url)
 response.raise_for_status()
@@ -28,7 +29,6 @@ def peliculas_duracion(pelicula: str):
         return f"{pelicula}. Duración: {duracion}. Año: {año}"
     else:
         return "Película no encontrada"
-import ast
 
 @app.get('/franquicia')
 def franquicia(franquicia: str):
