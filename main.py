@@ -9,7 +9,7 @@ from typing import List
 from io import StringIO
 url = "https://github.com/NicolasTablon/Proyecto_Individual2.git"
 
-df=pd.read_csv(r"C:\Users\Equipo\OneDrive\Escritorio\ProyectoIndividual\Csv_Proyecto_Terminado.csv")
+df= pd.read_csv(io.BytesIO(response.content), encoding="UTF-8", delimiter=",", error_bad_lines=False)
 # Agregar una nueva columna "año" con el año extraído de "release_year"
 for index, row in df.iterrows():
     fecha_completa = row["release_year"]
