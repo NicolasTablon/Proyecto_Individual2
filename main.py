@@ -53,6 +53,37 @@ def productoras_exitosas(productora: str):
     revenue_total = peliculas_productora["revenue"].sum()
     return f"La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas"
 
+@app.get('/get_director/{nombre_director}')
+def get_director(nombre_director: str):
+    director_movies = df[df['director'] == nombre_director]
+
+    # Calcular la métrica de éxito del director
+    exito_director = calcular_exito_director(director_movies)
+
+    # Recopilar información detallada de cada película
+    movies_info = []
+    for _, movie in director_movies.iterrows():
+        movie_info = {
+            'nombre_pelicula': movie['title'],
+            'fecha_lanzamiento': movie['release_year'],
+            'retorno_individual': movie['return'],
+            'costo': movie['budget'],
+            'ganancia': movie['revenue']
+        }
+        movies_info.append(movie_info)
+
+    return {
+        'exito_director': exito_director,
+        'peliculas': movies_info
+    }
+
+# Función para calcular la métrica de éxito del director
+def calcular_exito_director(director_movies):
+    # Implementa tu lógica para calcular la métrica de éxito del director
+    # Por ejemplo, puedes calcular el promedio de puntuaciones de las películas del director
+    exito_director = director_movies['vote_average'].mean()
+    return exito_director
+    
 @app.get('/recomendacion')
 async def recomendacion(titulo: str):
     # Convertir el título proporcionado a minúsculas
