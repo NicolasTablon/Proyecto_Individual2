@@ -38,14 +38,17 @@ def franquicia(franquicia: str):
     ganancia_total = peliculas_franquicia['revenue'].sum()
     ganancia_promedio = ganancia_total / cantidad_peliculas if cantidad_peliculas > 0 else 0
     return f"La franquicia {franquicia} posee {cantidad_peliculas} películas, una ganancia total de {ganancia_total} y una ganancia promedio de {ganancia_promedio}"
+    
 @app.get('/peliculas_idioma')
 def peliculas_idioma(idioma: str):
     cantidad_peliculas = sum(1 for _, pelicula in df.iterrows() if isinstance(pelicula["spoken_languages"], str) and idioma in pelicula["spoken_languages"])
     return f"{cantidad_peliculas} cantidad de películas fueron estrenadas en {idioma}"
+    
 @app.get('/peliculas_pais')
 def peliculas_pais(pais: str):
     cantidad_peliculas = sum(1 for index, pelicula in df.iterrows() if isinstance(pelicula["production_countries"], str) and pais in pelicula["production_countries"].split(","))
     return f"Se produjeron {cantidad_peliculas} películas en el país {pais}"
+    
 @app.get('/productoras_exitosas')
 def productoras_exitosas(productora: str):
     peliculas_productora = df[df["production_companies"].str.contains(productora, na=False)]
@@ -53,34 +56,37 @@ def productoras_exitosas(productora: str):
     revenue_total = peliculas_productora["revenue"].sum()
     return f"La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas"
 
+# Definir la ruta para la función get_director
 @app.get('/get_director/{nombre_director}')
 def get_director(nombre_director: str):
-    director_movies = df[df['director'] == nombre_director]
+    try:
+        director_movies = df[df['director'] == nombre_director]
 
-    # Calcular la métrica de éxito del director
-    exito_director = calcular_exito_director(director_movies)
+        # Calcular la métrica de éxito del director
+        exito_director = calcular_exito_director(director_movies)
 
-    # Recopilar información detallada de cada película
-    movies_info = []
-    for _, movie in director_movies.iterrows():
-        movie_info = {
-            'nombre_pelicula': movie['title'],
-            'fecha_lanzamiento': movie['release_year'],
-            'retorno_individual': movie['return'],
-            'costo': movie['budget'],
-            'ganancia': movie['revenue']
+        # Recopilar información detallada de cada película
+        movies_info = []
+        for _, movie in director_movies.iterrows():
+            movie_info = {
+                'nombre_pelicula': movie['title'],
+                'fecha_lanzamiento': movie['release_year'],
+                'retorno_individual': movie['return'],
+                'costo': movie['budget'],
+                'ganancia': movie['revenue']
+            }
+            movies_info.append(movie_info)
+
+        return {
+            'exito_director': exito_director,
+            'peliculas': movies_info
         }
-        movies_info.append(movie_info)
-
-    return {
-        'exito_director': exito_director,
-        'peliculas': movies_info
-    }
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 # Función para calcular la métrica de éxito del director
 def calcular_exito_director(director_movies):
     # Implementa tu lógica para calcular la métrica de éxito del director
-    # Por ejemplo, puedes calcular el promedio de puntuaciones de las películas del director
     exito_director = director_movies['vote_average'].mean()
     return exito_director
     
