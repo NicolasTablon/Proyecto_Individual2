@@ -14,11 +14,6 @@ response.raise_for_status()
 
 df= pd.read_csv(io.BytesIO(response.content), encoding="UTF-8", delimiter=",", error_bad_lines=False)
 
-# Agregar una nueva columna "año" con el año extraído de "release_year"
-for index, row in df.iterrows():
-    fecha_completa = row["release_year"]
-    año = fecha_completa.split("-")[0]
-    df.at[index, "anio"] = int(año)
 # Crear una instancia de FastAPI
 app = FastAPI()
 @app.get('/peliculas_duracion')
