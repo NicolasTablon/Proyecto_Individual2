@@ -77,31 +77,43 @@ def productoras_exitosas(productora: str):
     cantidad_peliculas = len(peliculas_productora)
     revenue_total = peliculas_productora["revenue"].sum()
     return f"La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas"
+@app.get('/get_director')
+def get_director(nombre_director: str):
+    # Filtrar el DataFrame para obtener las películas dirigidas por el director solicitado
+    peliculas_director = df[df['director'] == nombre_director]
 
-@app.get("/director/{director}")
-def get_director(director: str):
-    # Creamos un dataset nuevo aplicando el filtro del director y que no este vacio
-    df1 = df[df['director'].notna() & df['director'].str.contains(director)]
-    # Sumamos los retornos del director
-    retorno_dir = df1['return'].sum() 
-    cantidad_peliculas = df1.shape[0]    
-    data = {
-        "director": director,
-        "retorno del director": retorno_dir,
-        "total de peliculas dirigidas": cantidad_peliculas,
-        "peliculas": [{
-            "titulo": df1["title"].tolist(),
-            "estreno": df1["release_date"].tolist(),
-            "retorno": df1["return"].tolist(),
-            "presupuesto": df1["budget"].tolist(),
-            "ganancias": df1["earns"].tolist(),
-        }]
+    # Obtener el éxito del director (medido por la ganancia total)
+    exito_director = peliculas_director['revenue'].sum()
+
+    # Crear una lista para almacenar la información de cada película
+    peliculas_info = []
+
+    # Iterar sobre cada fila del DataFrame filtrado
+    for index, row in peliculas_director.iterrows():
+        # Obtener los datos relevantes de la película
+        titulo = row['title']
+        fecha_lanzamiento = row['release_year']
+        retorno_individual = row['return']
+        costo = row['budget']
+        ganancia = row['revenue']
+
+        # Crear un diccionario con la información de la película
+        pelicula_info = {
+            'titulo': titulo,
+            'fecha_lanzamiento': fecha_lanzamiento,
+            'retorno_individual': retorno_individual,
+            'costo': costo,
+            'ganancia': ganancia
+        }
+
+        # Agregar el diccionario a la lista de películas
+        peliculas_info.append(pelicula_info)
+
+    # Devolver el éxito del director y la lista de información de películas
+    return {
+        'exito_director': exito_director,
+        'peliculas_info': peliculas_info
     }
-    # Convert the data dictionary to a JSON string with proper indentation
-    json_data = json.dumps(data, indent=4)    
-    # Create a response object with the JSON data and the appropriate media type
-    response = Response(content=json_data, media_type="application/json")
-    return response
 
     
 @app.get('/recomendacion')
