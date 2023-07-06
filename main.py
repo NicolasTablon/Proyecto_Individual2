@@ -30,27 +30,20 @@ def peliculas_duracion(pelicula: str):
     else:
         return "Película no encontrada"
 
-@app.get('/franquicia')
-def obtener_franquicia(franquicia: str):
-    # Filtrar el dataset para obtener las películas de la franquicia solicitada
+def franquicia(franquicia: str):
+    # Filtrar el DataFrame para obtener las películas de la franquicia solicitada
     peliculas_franquicia = df[df['production_companies'] == franquicia]
 
     # Obtener la cantidad de películas de la franquicia
     cantidad_peliculas = len(peliculas_franquicia)
 
-    # Calcular la ganancia total de la franquicia
-    ganancia_total = peliculas_franquicia['return'].sum()
-
-    # Calcular la ganancia promedio de la franquicia
+    # Calcular la ganancia total y promedio de la franquicia
+    ganancia_total = peliculas_franquicia['revenue'].sum()
     ganancia_promedio = peliculas_franquicia['revenue'].mean()
 
     # Devolver la respuesta en el formato requerido
-    return {
-        "franquicia": franquicia,
-        "peliculas": cantidad_peliculas,
-        "ganancia_total": ganancia_total,
-        "ganancia_promedio": ganancia_promedio
-    }
+    return f"La franquicia {franquicia} posee {cantidad_peliculas} películas, una ganancia total de {ganancia_total} y una ganancia promedio de {ganancia_promedio}"
+
 
     
 @app.get('/peliculas_idioma')
@@ -58,16 +51,16 @@ def peliculas_idioma(idioma: str):
     cantidad_peliculas = sum(1 for _, pelicula in df.iterrows() if isinstance(pelicula["spoken_languages"], str) and idioma in pelicula["spoken_languages"])
     return f"{cantidad_peliculas} cantidad de películas fueron estrenadas en {idioma}"
     
-@app.get('/peliculas_pais')
-def obtener_peliculas_pais(pais: str):
-    # Filtrar el dataset para obtener las películas del país solicitado
-    peliculas_pais = dataset[dataset['production_countries'] == pais]
+def peliculas_pais(pais: str):
+    # Filtrar el DataFrame para obtener las películas del país solicitado
+    peliculas_pais = df[df['production_countries'].apply(lambda x: any(country['name'] == pais for country in x))]
 
     # Obtener la cantidad de películas del país
     cantidad_peliculas = len(peliculas_pais)
 
     # Devolver la respuesta en el formato requerido
     return f"Se produjeron {cantidad_peliculas} películas en el país {pais}"
+
     
 @app.get('/productoras_exitosas')
 def productoras_exitosas(productora: str):
