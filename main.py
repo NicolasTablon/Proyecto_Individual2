@@ -59,8 +59,14 @@ def peliculas_idioma(idioma: str):
     return f"{cantidad_peliculas} cantidad de películas fueron estrenadas en {idioma}"
     
 @app.get('/peliculas_pais')
-def peliculas_pais(pais: str):
-    cantidad_peliculas = sum(1 for index, pelicula in df.iterrows() if isinstance(pelicula["production_countries"], str) and pais in pelicula["production_countries"].split(","))
+def obtener_peliculas_pais(pais: str):
+    # Filtrar el dataset para obtener las películas del país solicitado
+    peliculas_pais = dataset[dataset['production_countries'] == pais]
+
+    # Obtener la cantidad de películas del país
+    cantidad_peliculas = len(peliculas_pais)
+
+    # Devolver la respuesta en el formato requerido
     return f"Se produjeron {cantidad_peliculas} películas en el país {pais}"
     
 @app.get('/productoras_exitosas')
