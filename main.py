@@ -55,13 +55,14 @@ def peliculas_idioma(idioma: str):
 @app.get('/peliculas_pais')    
 def peliculas_pais(pais: str):
     # Filtrar el DataFrame para obtener las películas del país solicitado
-    peliculas_pais = df[df['production_countries'].apply(lambda x: any(country['name'] == pais for country in x))]
+    peliculas_pais = df[df['production_countries'].str.contains(pais, na=False)]
 
     # Obtener la cantidad de películas del país
     cantidad_peliculas = len(peliculas_pais)
 
     # Devolver la respuesta en el formato requerido
     return f"Se produjeron {cantidad_peliculas} películas en el país {pais}"
+
 
     
 @app.get('/productoras_exitosas')
