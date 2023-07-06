@@ -56,29 +56,30 @@ def productoras_exitosas(productora: str):
     revenue_total = peliculas_productora["revenue"].sum()
     return f"La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas"
 
-@app.get('/get_director/{nombre_director}')
-def get_director(nombre_director: str):
-    director_movies = df[df['director'] == nombre_director]
-
-    # Calcular la métrica de éxito del director
-    exito_director = calcular_exito_director(director_movies)
-
-    # Recopilar información detallada de cada película
-    movies_info = []
-    for _, movie in director_movies.iterrows():
-        movie_info = {
-            'nombre_pelicula': str(movie['title']),
-            'fecha_lanzamiento': str(movie['release_year']),
-            'retorno_individual': str(movie['return']),
-            'costo': str(movie['budget']),
-            'ganancia': str(movie['revenue'])
-        }
-        movies_info.append(movie_info)
-
-    return {
-        'exito_director': str(exito_director),
-        'peliculas': movies_info
+@app.get("/director/{director}")
+def get_director(director: str):
+    # Creamos un dataset nuevo aplicando el filtro del director y que no este vacio
+    df1 = df[df['director'].notna() & df['director'].str.contains(director)]
+    # Sumamos los retornos del director
+    retorno_dir = df1['return'].sum() 
+    cantidad_peliculas = df1.shape[0]    
+    data = {
+        "director": director,
+        "retorno del director": retorno_dir,
+        "total de peliculas dirigidas": cantidad_peliculas,
+        "peliculas": [{
+            "titulo": df1["title"].tolist(),
+            "estreno": df1["release_date"].tolist(),
+            "retorno": df1["return"].tolist(),
+            "presupuesto": df1["budget"].tolist(),
+            "ganancias": df1["earns"].tolist(),
+        }]
     }
+    # Convert the data dictionary to a JSON string with proper indentation
+    json_data = json.dumps(data, indent=4)    
+    # Create a response object with the JSON data and the appropriate media type
+    response = Response(content=json_data, media_type="application/json")
+    return response
 
     
 @app.get('/recomendacion')
