@@ -31,13 +31,26 @@ def peliculas_duracion(pelicula: str):
         return "Película no encontrada"
 
 @app.get('/franquicia')
-def franquicia(franquicia: str):
-    df['production_companies'] = df['production_companies'].apply(ast.literal_eval)
-    peliculas_franquicia = df.loc[df['production_companies'].apply(lambda x: franquicia in x)]
+def obtener_franquicia(franquicia: str):
+    # Filtrar el dataset para obtener las películas de la franquicia solicitada
+    peliculas_franquicia = df[df['production_companies'] == franquicia]
+
+    # Obtener la cantidad de películas de la franquicia
     cantidad_peliculas = len(peliculas_franquicia)
-    ganancia_total = peliculas_franquicia['revenue'].sum()
-    ganancia_promedio = ganancia_total / cantidad_peliculas if cantidad_peliculas > 0 else 0
-    return f"La franquicia {franquicia} posee {cantidad_peliculas} películas, una ganancia total de {ganancia_total} y una ganancia promedio de {ganancia_promedio}"
+
+    # Calcular la ganancia total de la franquicia
+    ganancia_total = peliculas_franquicia['return'].sum()
+
+    # Calcular la ganancia promedio de la franquicia
+    ganancia_promedio = peliculas_franquicia['revenue'].mean()
+
+    # Devolver la respuesta en el formato requerido
+    return {
+        "franquicia": franquicia,
+        "peliculas": cantidad_peliculas,
+        "ganancia_total": ganancia_total,
+        "ganancia_promedio": ganancia_promedio
+    }
     
 @app.get('/peliculas_idioma')
 def peliculas_idioma(idioma: str):
