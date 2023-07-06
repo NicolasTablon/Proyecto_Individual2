@@ -51,6 +51,7 @@ def obtener_franquicia(franquicia: str):
         "ganancia_total": ganancia_total,
         "ganancia_promedio": ganancia_promedio
     }
+
     
 @app.get('/peliculas_idioma')
 def peliculas_idioma(idioma: str):
