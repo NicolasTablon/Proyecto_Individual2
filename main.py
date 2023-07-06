@@ -49,8 +49,14 @@ def franquicia(franquicia: str):
     
 @app.get('/peliculas_idioma')
 def peliculas_idioma(idioma: str):
-    cantidad_peliculas = sum(1 for _, pelicula in df.iterrows() if isinstance(pelicula["spoken_languages"], str) and idioma in pelicula["spoken_languages"])
-    return f"{cantidad_peliculas} cantidad de películas fueron estrenadas en {idioma}"
+    # Filtrar el DataFrame para obtener las películas en el idioma solicitado
+    peliculas_idioma = df[df['spoken_languages'].str.contains(idioma, na=False)]
+
+    # Obtener la cantidad de películas en el idioma
+    cantidad_peliculas = len(peliculas_idioma)
+
+    # Devolver la respuesta en el formato requerido
+    return f"{cantidad_peliculas} películas fueron estrenadas en idioma {idioma}"
     
 @app.get('/peliculas_pais')    
 def peliculas_pais(pais: str):
