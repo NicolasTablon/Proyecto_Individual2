@@ -29,7 +29,8 @@ def peliculas_duracion(pelicula: str):
         return f"{pelicula}. Duración: {duracion}. Año: {año}"
     else:
         return "Película no encontrada"
-
+        
+@app.get('/franquicia')
 def franquicia(franquicia: str):
     # Filtrar el DataFrame para obtener las películas de la franquicia solicitada
     peliculas_franquicia = df[df['production_companies'] == franquicia]
@@ -51,6 +52,7 @@ def peliculas_idioma(idioma: str):
     cantidad_peliculas = sum(1 for _, pelicula in df.iterrows() if isinstance(pelicula["spoken_languages"], str) and idioma in pelicula["spoken_languages"])
     return f"{cantidad_peliculas} cantidad de películas fueron estrenadas en {idioma}"
     
+@app.get('/peliculas_pais')    
 def peliculas_pais(pais: str):
     # Filtrar el DataFrame para obtener las películas del país solicitado
     peliculas_pais = df[df['production_countries'].apply(lambda x: any(country['name'] == pais for country in x))]
