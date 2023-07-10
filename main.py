@@ -81,7 +81,8 @@ def productoras_exitosas(productora: str):
 @app.get('/get_director')
 def get_director(nombre_director: str):
     peliculas_producidas = 0
-    #Creo Diccionario con los datos
+    # Suponiendo que tienes un DataFrame llamado 'df' con los datos de las películas
+
     titulo = []
     fecha_lanzamiento = []
     retorno = []
@@ -89,19 +90,27 @@ def get_director(nombre_director: str):
     ganancia = []
     retorno_total = []
 
-    for i in enumerate(df["director"]):
-        for director in lista_directores:
-            if director == nombre_director:
-                peliculas_producidas +=1
-                retorno_total +=df["return"].values [i]
-                titulo.append(df["title"].values[i])
-                fecha_lanzamiento.append(df["release date"].values[i])
-                costo.append(df["budget"].values[i])
-                ganancia.append(df["revenue"].values[i])
-                retorno.append(df["return"].values[i])
+    for i, director in enumerate(df["director"]):
+        if director == nombre_director:
+            peliculas_producidas += 1
+            retorno_total.append(df["return"].values[i])
+            titulo.append(df["title"].values[i])
+            fecha_lanzamiento.append(df["release date"].values[i])
+            costo.append(df["budget"].values[i])
+            ganancia.append(df["revenue"].values[i])
+            retorno.append(df["return"].values[i])
 
-lista_peliuclas = {"titulo":titulo, "fecha_lanzamiento": fecha_lanzamiento, "costo": costo, "ganancia":ganancia, "retorno":retorno}
-df_pelis = pd.DataFrame(lista_peliuclas)
+    lista_peliculas = {
+        "titulo": titulo,
+        "fecha_lanzamiento": fecha_lanzamiento,
+        "costo": costo,
+        "ganancia": ganancia,
+        "retorno": retorno
+    }
+    df_pelis = pd.DataFrame(lista_peliculas)
+
+    # Realiza cualquier otro procesamiento necesario o devuelve el DataFrame según sea necesario
+    return df_pelis.to_json()
 
     
 @app.get('/recomendacion')
