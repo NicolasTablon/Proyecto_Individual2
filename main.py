@@ -77,43 +77,31 @@ def productoras_exitosas(productora: str):
     cantidad_peliculas = len(peliculas_productora)
     revenue_total = peliculas_productora["revenue"].sum()
     return f"La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas"
+    
 @app.get('/get_director')
 def get_director(nombre_director: str):
-    # Filtrar el DataFrame para obtener las películas dirigidas por el director solicitado
-    peliculas_director = df[df['director'] == nombre_director]
+    peliculas_producidas = 0
+    #Creo Diccionario con los datos
+    titulo = []
+    fecha_lanzamiento = []
+    retorno = []
+    costo = []
+    ganancia = []
+    retorno_total = []
 
-    # Obtener el éxito del director (medido por la ganancia total)
-    exito_director = peliculas_director['revenue'].sum()
+    for i in enumerate(df["director"]):
+        for director in lista_directores:
+            if director == nombre_director:
+                peliculas_producidas +=1
+                retorno_total +=df["return"].values [i]
+                titulo.append(df["title"].values[i])
+                fecha_lanzamiento.append(df["release date"].values[i])
+                costo.append(df["budget"].values[i])
+                ganancia.append(df["revenue"].values[i])
+                retorno.append(df["return"].values[i])
 
-    # Crear una lista para almacenar la información de cada película
-    peliculas_info = []
-
-    # Iterar sobre cada fila del DataFrame filtrado
-    for index, row in peliculas_director.iterrows():
-        # Obtener los datos relevantes de la película
-        titulo = row['title']
-        fecha_lanzamiento = row['release_year']
-        retorno_individual = row['return']
-        costo = row['budget']
-        ganancia = row['revenue']
-
-        # Crear un diccionario con la información de la película
-        pelicula_info = {
-            'titulo': titulo,
-            'fecha_lanzamiento': fecha_lanzamiento,
-            'retorno_individual': retorno_individual,
-            'costo': costo,
-            'ganancia': ganancia
-        }
-
-        # Agregar el diccionario a la lista de películas
-        peliculas_info.append(pelicula_info)
-
-    # Devolver el éxito del director y la lista de información de películas
-    return {
-        'exito_director': exito_director,
-        'peliculas_info': peliculas_info
-    }
+lista_peliuclas = {"titulo":titulo, "fecha_lanzamiento": fecha_lanzamiento, "costo": costo, "ganancia":ganancia, "retorno":retorno}
+df_pelis = pd.DataFrame(lista_peliuclas)
 
     
 @app.get('/recomendacion')
